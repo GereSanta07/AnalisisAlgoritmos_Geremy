@@ -6,7 +6,13 @@
 
 ## Instrucciones para reproducir el experimento
 
-*Esta sección se completará con los comandos correspondientes a la ejecución de las Partes 3 y 4.*
+Para ejecutar los experimentos del laboratorio, primero se debe activar el entorno virtual y ubicarse en la carpeta del laboratorio.
+
+```bash
+python parte3_casos.py
+```
+
+Este comando ejecuta el experimento de la Parte 3 para los tres escenarios y los siete tamaños de entrada definidos, y genera las gráficas correspondientes en la carpeta graficas/.
 
 ---
 
@@ -43,3 +49,53 @@ Para decidir si Tamiza puede utilizar el algoritmo en producción,es importante 
 Antes de hacer las pruebas, mi primera impresión sobre los tres escenarios es que el escenario C, que llega en orden inverso, podría ser el peor para Insertion Sort. Lo antetior debido a que el algoritmo tendría que ir acomodando los elementos que están en una posición muy diferente de la que necesitan, lo que haria que se presentaran probablemente muchas comparaciones. En cambio, el escenario B, que ya tiene el 98 % de los datos ordenados, debería ser el que menos trabajo necesite, ya que la mayor parte de los registros estan en una posición adecuada.
 
 Para el escenario A, que tiene los datos en un orden aleatorio, esperaría un comportamiento que se encuentre en un punto medio de los anteriores y que pueda representar una situación más cercana a lo que normalmente encontraríamos cuando los datos no tienen un orden específico. Las mediciones serán las que permitan comprobar si realmente ocurre de esta manera.
+
+### 3.2 — Experimento en Python
+
+La implementación utilizada para el experimento se encuentra en [`algoritmos.py`](algoritmos.py) y los generadores de datos de los tres escenarios se encuentran en [`datos.py`](datos.py). El experimento completo se encuentra en [`parte3_casos.py`](parte3_casos.py).
+
+Para realizar las pruebas se utilizaron siete tamaños de entrada:
+
+- 100
+- 200
+- 400
+- 800
+- 1600
+- 3200
+- 6400
+
+Para cada tamaño se ejecutó `insertion_sort` sobre los escenarios A, B y C. El tiempo se midió utilizando `time.perf_counter()` y se contó el número de comparaciones realizadas entre elementos de la lista. La generación de los datos se realizó antes de iniciar el cronómetro, por lo que no hace parte del tiempo registrado.
+
+Los resultados obtenidos fueron los siguientes:
+
+| Tamaño | A comparaciones | A tiempo (s) | B comparaciones | B tiempo (s) | C comparaciones | C tiempo (s) |
+| -----: | --------------: | -----------: | --------------: | -----------: | --------------: | -----------: |
+|    100 |           2.542 |       0,0004 |             100 |       0,0003 |           4.950 |       0,0008 |
+|    200 |           9.970 |       0,0012 |             203 |       0,0005 |          19.900 |       0,0034 |
+|    400 |          40.436 |       0,0082 |             417 |       0,0005 |          79.800 |       0,0154 |
+|    800 |         160.484 |       0,0331 |             866 |       0,0005 |         319.600 |       0,0616 |
+|   1600 |         648.481 |       0,1005 |           1.851 |       0,0008 |       1.279.200 |       0,1822 |
+|   3200 |       2.533.103 |       0,3976 |           4.172 |       0,0011 |       5.118.400 |       0,8215 |
+|   6400 |      10.276.753 |       1,5970 |          10.277 |       0,0018 |      20.476.800 |       2,6352 |
+
+#### Comparaciones
+
+La siguiente gráfica muestra el número de comparaciones realizadas por Insertion Sort para cada escenario:
+
+![Comparaciones de Insertion Sort](graficas/parte3_comparaciones.png)
+
+#### Tiempo de ejecución
+
+La siguiente gráfica muestra el tiempo de ejecución medido para cada escenario:
+
+![Tiempo de ejecución de Insertion Sort](graficas/parte3_tiempo.png)
+
+### Análisis de los resultados
+
+Los resultados obtenidos coinciden con la predicción realizada en la sección 3.1. El escenario C fue el que presentó la mayor cantidad de comparaciones para todos los tamaños evaluados. Para `n = 6400`, realizó 20.476.800 comparaciones y tuvo un tiempo de ejecución de aproximadamente 2,64 segundos. Por esta razón, dentro de los escenarios evaluados, C presentó el peor comportamiento para Insertion Sort.
+
+El escenario B presentó el menor número de comparaciones y el menor tiempo en las pruebas. Para `n = 6400` realizó 10.277 comparaciones y tardó aproximadamente 0,0018 segundos. Esto se relaciona con que el 98 % de los datos ya se encuentra ordenado y el algoritmo necesita hacer mucho menos trabajo.
+
+El escenario A quedó entre B y C. Para `n = 6400` realizó 10.276.753 comparaciones y tardó aproximadamente 1,60 segundos. Al tratarse de datos aleatorios, este escenario se aproxima al comportamiento que se puede esperar del caso promedio, aunque esta prueba por sí sola no demuestra matemáticamente el caso promedio para todas las entradas posibles.
+
+Por lo tanto, los resultados experimentales coinciden con la predicción inicial: C tuvo el comportamiento más costoso, B el menor costo entre los escenarios planteados y A quedó en una posición intermedia.
